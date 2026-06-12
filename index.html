@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Request Tracker</title>
+  <meta name="description" content="Submit and manage product requests, feedback, bugs and ideas." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div class="wordmark">
+        <span class="wordmark-tick" aria-hidden="true"></span>
+        <h1>Request<span>Tracker</span></h1>
+      </div>
+
+      <!-- Live queue meter: one segment per status, sized by share of the queue -->
+      <div class="queue-meter" aria-label="Queue breakdown by status">
+        <div class="meter-bar" id="meter-bar" role="img" aria-describedby="meter-legend"></div>
+        <ul class="meter-legend" id="meter-legend"></ul>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap layout">
+    <!-- ============ Intake form ============ -->
+    <section class="panel panel-form" aria-labelledby="form-title">
+      <div class="panel-head">
+        <p class="eyebrow">Intake</p>
+        <h2 id="form-title">Submit a request</h2>
+        <p class="panel-sub">Bugs, ideas, feedback or partnerships — everything lands in the request queue.</p>
+      </div>
+
+      <form id="request-form" novalidate>
+        <div class="field">
+          <label for="name">Full name</label>
+          <input type="text" id="name" name="name" autocomplete="name" placeholder="e.g. Oiza Bello" required />
+          <p class="field-error" data-error-for="name"></p>
+        </div>
+
+        <div class="field">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" autocomplete="email" placeholder="you@example.com" required />
+          <p class="field-error" data-error-for="email"></p>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="product">Product / company</label>
+            <select id="product" name="product" required>
+              <option value="" selected disabled>Select a product</option>
+            </select>
+            <p class="field-error" data-error-for="product"></p>
+          </div>
+
+          <div class="field">
+            <label for="type">Request type</label>
+            <select id="type" name="type" required>
+              <option value="" selected disabled>Select a type</option>
+            </select>
+            <p class="field-error" data-error-for="type"></p>
+          </div>
+        </div>
+
+        <fieldset class="field">
+          <legend>Priority</legend>
+          <div class="priority-group" id="priority-group">
+            <!-- Priority radio pills injected by app.js -->
+          </div>
+          <p class="field-error" data-error-for="priority"></p>
+        </fieldset>
+
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea
+            id="message"
+            name="message"
+            rows="4"
+            placeholder="Describe the request. What happened, what you expected, or what you'd like to see."
+            required
+          ></textarea>
+          <p class="field-error" data-error-for="message"></p>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add to queue</button>
+      </form>
+    </section>
+
+    <!-- ============ Request queue ============ -->
+    <section class="panel panel-queue" aria-labelledby="queue-title">
+      <div class="queue-head">
+        <div>
+          <p class="eyebrow">Queue</p>
+          <h2 id="queue-title">Requests <span class="count-badge" id="queue-count">0</span></h2>
+        </div>
+        <button type="button" class="btn btn-ghost" id="export-csv">Export CSV</button>
+      </div>
+
+      <div class="toolbar" role="search">
+        <input
+          type="search"
+          id="search-input"
+          class="search-input"
+          placeholder="Search name, email or message…"
+          aria-label="Search requests"
+        />
+        <div class="toolbar-filters">
+          <select id="filter-status" aria-label="Filter by status"></select>
+          <select id="filter-type" aria-label="Filter by request type"></select>
+          <select id="filter-priority" aria-label="Filter by priority"></select>
+          <select id="filter-product" aria-label="Filter by product"></select>
+          <button type="button" class="btn btn-ghost btn-clear" id="clear-filters" hidden>Clear</button>
+        </div>
+      </div>
+
+      <ul class="request-list" id="request-list" aria-live="polite"></ul>
+
+      <div class="empty-state" id="empty-state">
+        <p class="empty-title">The queue is empty</p>
+        <p class="empty-sub">Submit a request with the form to see it appear here.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>Requests are stored in your browser via localStorage — refresh and they'll still be here.</p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
