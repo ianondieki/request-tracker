@@ -52,7 +52,7 @@ The product/company options live in one constant at the top of `js/app.js`:
 const PRODUCTS = ["Photomed", "Photomed Web", "Photomed Mobile", "Other"];
 ```
 
-Update this list to match the options provided in the recruitment email.
+I will Update this list to match the options provided by the recruiter once they are made available.
 
 ## Deployment
 
@@ -91,4 +91,4 @@ What I'd improve with more time
 
 ## Use of AI tools
 
-I used an AI assistant (Claude) while building this project — for scaffolding, debugging and improving the UI. I reviewed the output, tested every feature, and I understand and can explain all of the code in this repository.
+I used an AI assistant while building this project — for scaffolding, debugging and improving the UI. I reviewed the output, tested every feature, and I understand and can explain all of the code in this repository.
