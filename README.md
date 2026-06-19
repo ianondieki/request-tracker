@@ -76,8 +76,6 @@ Everything in the basic brief: working form, validated inputs, queue list, statu
 
 ## What I'd improve with more time
 
-What I'd improve with more time
-
 - Move storage to a shared backend (Cloudflare D1 + a small API) so requests sync across devices instead of living in one browser's localStorage.
 - An admin-only view behind authentication, so status changes and deletes aren't open to every visitor.
 - Automated tests for the filtering and validation logic, to lock that behaviour down before adding features.
