@@ -13,7 +13,7 @@
 
 /* ---------------- 1. CONFIG ---------------- */
 
-// Update PRODUCTS with the options provided in the recruitment email.
+
 const PRODUCTS = ["Photomed", "Photomed Web", "Photomed Mobile", "Other"];
 
 const REQUEST_TYPES = ["Bug", "Feature Request", "General Feedback", "Partnership", "Other"];
