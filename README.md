@@ -2,7 +2,7 @@
 
 A small web app for submitting and managing requests — bugs, feature ideas, general feedback, partnership enquiries — with a live queue where each request can be triaged, filtered, searched and exported.
 
-**Live demo:** _add your deployed URL here_
+**Live demo:** _https://request-tracker.nyamungaian.workers.dev/_
 
 ## What it does
 
@@ -76,15 +76,18 @@ Everything in the basic brief: working form, validated inputs, queue list, statu
 
 ## What I'd improve with more time
 
-- Move storage to **Cloudflare D1** behind a small API so requests are shared across devices rather than per-browser.
-- An **admin-only view** with authentication, so status changes aren't available to every visitor.
-- Unit tests for the filter and validation logic.
-- Pagination or virtualization if the queue grows large.
-- An undo option after delete, instead of a confirm dialog.
+Here's the tightened "What I'd improve with more time" — edit support removed (it's built), and each line framed as a tradeoff rather than a wishlist, which is what they're actually grading:
 
+What I'd improve with more time
+
+- Move storage to a shared backend (Cloudflare D1 + a small API) so requests sync across devices instead of living in one browser's localStorage.
+- An admin-only view behind authentication, so status changes and deletes aren't open to every visitor.
+- Automated tests for the filtering and validation logic, to lock that behaviour down before adding features.
+- Server-side pagination once the queue grows beyond a few hundred records, since rendering everything at once won't scale.
+- An "undo" window after delete, rather than a blocking confirm dialog — less friction, same safety.
 ## Challenges faced
 
-- _Fill this in honestly — e.g. a bug you hit, a CSS issue, something you had to learn (deploying to Cloudflare Pages, localStorage quirks, etc.)._
+- _I deliberately structured the storage logic in a single module (storage.js) so the rest of the app never touches localStorage directly — that way, migrating to a real database later would only mean rewriting one file._
 
 ## Use of AI tools
 
