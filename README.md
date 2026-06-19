@@ -37,7 +37,7 @@ No install needed. Either:
 2. Serve it locally (avoids any browser restrictions on `file://` pages):
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/ianondieki/request-tracker
 cd request-tracker
 npx serve .        # or: python3 -m http.server 8000
 ```
@@ -75,8 +75,6 @@ Deployed on **Cloudflare Pages** (no build step needed):
 Everything in the basic brief: working form, validated inputs, queue list, status changes, multiple filters plus search, and `localStorage` persistence. Optional improvements included: edit and delete actions, CSV export, summary meter (with click-to-filter), form validation, and responsive design.
 
 ## What I'd improve with more time
-
-Here's the tightened "What I'd improve with more time" — edit support removed (it's built), and each line framed as a tradeoff rather than a wishlist, which is what they're actually grading:
 
 What I'd improve with more time
 
