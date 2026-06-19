@@ -2,16 +2,17 @@
 
 A small web app for submitting and managing requests — bugs, feature ideas, general feedback, partnership enquiries — with a live queue where each request can be triaged, filtered, searched and exported.
 
-**Live demo:** _add your deployed URL here_
+**Live demo:** _https://request-tracker.nyamungaian.workers.dev/_
 
 ## What it does
 
 - **Submit a request** with full name, email, product/company, request type (Bug, Feature Request, General Feedback, Partnership, Other), priority (Low, Medium, High) and a message. Every field is validated inline before the request is accepted.
 - **Queue view** — each submitted request appears as a card showing all its details, a sequential reference (`REQ-0001`, `REQ-0002`, …) and a relative timestamp.
 - **Status management** — every request starts as **New** and can be moved to **In Review**, **Resolved** or **Rejected** directly from its card. The colored spine on the card's left edge reflects its current status.
-- **Filtering and search** — filter by status, type, priority or product (individually or combined), plus free-text search across name, email, message and reference. A "Clear" button resets everything.
+- **Filtering and search** — filter by status, type, priority or product (individually or combined), plus free-text search across name, email, message and reference. A "Clear" button resets everything. The header meter's legend is also clickable: tap a status to filter by it, tap again to clear.
+- **Edit and delete** — any request can be loaded back into the form ("Edit"), updated and saved; its reference, status and created time are preserved and the card is marked "edited". Delete asks for confirmation first.
 - **Persistence** — requests are saved to `localStorage`, so they survive page refreshes and browser restarts.
-- **Extras** — live queue-breakdown meter in the header, delete with confirmation, CSV export, empty/no-match states, toast notifications, responsive layout down to mobile, keyboard-visible focus states, and `prefers-reduced-motion` support.
+- **Extras** — live queue-breakdown meter in the header, inline validation errors that clear as you type, CSV export, empty/no-match states, toast notifications, self-refreshing relative timestamps, responsive layout down to mobile, keyboard-visible focus states, and `prefers-reduced-motion` support.
 
 ## Tech stack
 
@@ -53,6 +54,15 @@ const PRODUCTS = ["Photomed", "Photomed Web", "Photomed Mobile", "Other"];
 
 Update this list to match the options provided in the recruitment email.
 
+## Deployment
+
+Deployed on **Cloudflare Pages** (no build step needed):
+
+1. Push this repo to GitHub.
+2. In the Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git**, select the repo.
+3. Leave **Build command** empty and set **Build output directory** to `/`.
+4. Deploy — Cloudflare gives you a `*.pages.dev` URL within a minute or two.
+
 ## Design notes
 
 - The header **queue meter** is a segmented bar showing the proportion of New / In Review / Resolved / Rejected requests — it updates live as statuses change.
@@ -62,19 +72,19 @@ Update this list to match the options provided in the recruitment email.
 
 ## What's completed
 
-Everything in the basic brief: working form, validated inputs, queue list, status changes, multiple filters plus search, and `localStorage` persistence. Optional improvements included: delete, CSV export, summary meter, form validation, responsive design.
+Everything in the basic brief: working form, validated inputs, queue list, status changes, multiple filters plus search, and `localStorage` persistence. Optional improvements included: edit and delete actions, CSV export, summary meter (with click-to-filter), form validation, and responsive design.
 
 ## What I'd improve with more time
 
-- Move storage to **Cloudflare D1** behind a small API so requests are shared across devices rather than per-browser.
-- An **admin-only view** with authentication, so status changes aren't available to every visitor.
-- **Edit** support for submitted requests (currently only status can change).
-- Unit tests for the filter and validation logic.
-- Pagination or virtualization if the queue grows large.
+-Move storage to a shared backend (Cloudflare D1 + a small API) so requests sync across devices instead of living in one browser.
+-An admin-only view behind authentication, so status changes aren't open to every visitor.
+-Automated tests for the filtering and validation logic.
+-Server-side pagination once the queue grows beyond a few hundred records.
+-An "undo" window after delete, rather than a blocking confirm dialog.
 
 ## Challenges faced
 
-- _Fill this in honestly — e.g. a bug you hit, a CSS issue, something you had to learn (deploying to Cloudflare Pages, localStorage quirks, etc.)._
+-The trickiest bug was a horizontal scroll that only appeared on mobile. The layout looked fine on desktop, and it took me a while to trace it to the hidden radio inputs behind the priority buttons stretching the page. I also had to figure out the right Cloudflare build settings, since a plain HTML site has no build command._
 
 ## Use of AI tools
 

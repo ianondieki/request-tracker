@@ -132,11 +132,36 @@ body {
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem 1rem;
+  gap: 0.35rem 0.4rem;
   margin-top: 0.45rem;
+}
+
+.legend-btn {
   font-family: var(--font-mono);
   font-size: 0.68rem;
   color: var(--slate);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 99px;
+  padding: 0.1rem 0.5rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.legend-btn:hover {
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.legend-btn:focus-visible {
+  outline: 3px solid rgba(14, 124, 102, 0.35);
+  outline-offset: 1px;
+}
+
+.legend-btn.active {
+  color: var(--ink);
+  font-weight: 600;
+  border-color: var(--ink);
 }
 
 .meter-legend .dot {
@@ -202,6 +227,58 @@ body {
   font-size: 0.88rem;
   margin-top: 0.35rem;
   margin-bottom: 1.4rem;
+}
+
+/* ---------- Edit mode ---------- */
+
+.panel-form.editing {
+  border-color: var(--viridian);
+  box-shadow: 0 0 0 3px rgba(14, 124, 102, 0.12), var(--shadow);
+}
+
+.editing-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: rgba(14, 124, 102, 0.08);
+  border: 1px solid rgba(14, 124, 102, 0.3);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.84rem;
+  margin-bottom: 1.1rem;
+}
+
+.editing-banner[hidden] {
+  display: none;
+}
+
+.editing-banner .mono {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--viridian-dark);
+}
+
+.btn-cancel-edit {
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--slate);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+}
+
+.btn-cancel-edit:hover {
+  color: var(--red);
+  background: rgba(179, 64, 47, 0.08);
+}
+
+.btn-cancel-edit:focus-visible {
+  outline: 3px solid rgba(14, 124, 102, 0.35);
+  outline-offset: 1px;
 }
 
 /* ---------- Form ---------- */
@@ -579,14 +656,25 @@ body {
   box-shadow: 0 0 0 3px rgba(14, 124, 102, 0.16);
 }
 
-.btn-delete {
+.btn-card {
   background: none;
   border: none;
   color: var(--slate);
   font-size: 0.72rem;
+  font-weight: 500;
   cursor: pointer;
   padding: 0.25rem 0.4rem;
   border-radius: 6px;
+}
+
+.btn-card:focus-visible {
+  outline: 3px solid rgba(14, 124, 102, 0.35);
+  outline-offset: 1px;
+}
+
+.btn-edit:hover {
+  color: var(--viridian);
+  background: rgba(14, 124, 102, 0.08);
 }
 
 .btn-delete:hover {
@@ -665,8 +753,15 @@ body {
     position: static;
   }
 
+  .header-inner {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
   .queue-meter {
-    display: none;
+    flex-basis: 100%;
+    max-width: none;
+    min-width: 0;
   }
 }
 

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Request Tracker</title>
   <meta name="description" content="Submit and manage product requests, feedback, bugs and ideas." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='3' width='7' height='26' rx='3' fill='%230E7C66'/%3E%3Crect x='15' y='10' width='13' height='5' rx='2.5' fill='%2315282D'/%3E%3Crect x='15' y='19' width='13' height='5' rx='2.5' fill='%23C97A12'/%3E%3C/svg%3E" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -40,10 +41,15 @@
         <p class="panel-sub">Bugs, ideas, feedback or partnerships — everything lands in the request queue.</p>
       </div>
 
+      <div class="editing-banner" id="editing-banner" hidden>
+        <span>Editing <strong id="editing-ref" class="mono"></strong></span>
+        <button type="button" class="btn-cancel-edit" id="cancel-edit">Cancel</button>
+      </div>
+
       <form id="request-form" novalidate>
         <div class="field">
           <label for="name">Full name</label>
-          <input type="text" id="name" name="name" autocomplete="name" placeholder="e.g. Oiza Bello" required />
+          <input type="text" id="name" name="name" autocomplete="name" placeholder="e.g. Ian Ondieki" required />
           <p class="field-error" data-error-for="name"></p>
         </div>
 
@@ -91,7 +97,7 @@
           <p class="field-error" data-error-for="message"></p>
         </div>
 
-        <button type="submit" class="btn btn-primary">Add to queue</button>
+        <button type="submit" class="btn btn-primary" id="submit-btn">Add to queue</button>
       </form>
     </section>
 

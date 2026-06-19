@@ -31,6 +31,9 @@ const STATUS_COLORS = {
 
 let requests = Storage.loadRequests();
 
+// When set, the form is editing an existing request instead of creating one.
+let editingId = null;
+
 const filters = {
   search: "",
   status: "",
@@ -59,6 +62,11 @@ const el = {
   clearFilters: document.getElementById("clear-filters"),
   exportCsv: document.getElementById("export-csv"),
   toast: document.getElementById("toast"),
+  submitBtn: document.getElementById("submit-btn"),
+  editingBanner: document.getElementById("editing-banner"),
+  editingRef: document.getElementById("editing-ref"),
+  cancelEdit: document.getElementById("cancel-edit"),
+  formPanel: document.querySelector(".panel-form"),
 };
 
 /* ---------------- 4. SETUP ---------------- */
@@ -127,6 +135,20 @@ function init() {
 
   el.clearFilters.addEventListener("click", clearAllFilters);
   el.exportCsv.addEventListener("click", exportCsv);
+  el.cancelEdit.addEventListener("click", cancelEditing);
+
+  // Clear a field's error as soon as the user starts fixing it.
+  el.form.addEventListener("input", (event) => {
+    const name = event.target.name;
+    if (name && validators[name]) setFieldError(name, "");
+  });
+
+  // Keep relative timestamps ("5 min ago") fresh without re-rendering the list.
+  setInterval(() => {
+    document.querySelectorAll(".req-time").forEach((time) => {
+      time.textContent = formatTimeLabel(time.getAttribute("datetime"), time.dataset.edited === "true");
+    });
+  }, 60_000);
 
   render();
 }
@@ -180,6 +202,27 @@ function handleSubmit(event) {
     return;
   }
 
+  if (editingId) {
+    // Update the existing request, keeping its ref, status and created time.
+    const req = requests.find((r) => r.id === editingId);
+    if (req) {
+      Object.assign(req, {
+        name: values.name.trim(),
+        email: values.email.trim(),
+        product: values.product,
+        type: values.type,
+        priority: values.priority,
+        message: values.message.trim(),
+        updatedAt: new Date().toISOString(),
+      });
+      Storage.saveRequests(requests);
+      showToast(`${req.ref} updated`);
+    }
+    cancelEditing();
+    render();
+    return;
+  }
+
   const request = {
     id: crypto.randomUUID(),
     ref: `REQ-${String(Storage.nextSequence()).padStart(4, "0")}`,
@@ -199,6 +242,40 @@ function handleSubmit(event) {
   el.form.reset();
   showToast(`${request.ref} added to the queue`);
   render();
+}
+
+/** Load an existing request into the form so it can be edited. */
+function startEditing(id) {
+  const req = requests.find((r) => r.id === id);
+  if (!req) return;
+
+  editingId = id;
+
+  el.form.elements.name.value = req.name;
+  el.form.elements.email.value = req.email;
+  el.form.elements.product.value = req.product;
+  el.form.elements.type.value = req.type;
+  el.form.elements.message.value = req.message;
+  const radio = el.form.querySelector(`input[name="priority"][value="${req.priority}"]`);
+  if (radio) radio.checked = true;
+
+  el.editingRef.textContent = req.ref;
+  el.editingBanner.hidden = false;
+  el.submitBtn.textContent = "Save changes";
+  el.formPanel.classList.add("editing");
+
+  el.formPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+  el.form.elements.name.focus();
+}
+
+/** Leave edit mode and return the form to its blank "create" state. */
+function cancelEditing() {
+  editingId = null;
+  el.form.reset();
+  el.editingBanner.hidden = true;
+  el.submitBtn.textContent = "Add to queue";
+  el.formPanel.classList.remove("editing");
+  for (const name of Object.keys(validators)) setFieldError(name, "");
 }
 
 /* ---------------- 6. RENDERING ---------------- */
@@ -246,10 +323,12 @@ function renderList(visible) {
       (s) => `<option value="${s}" ${s === req.status ? "selected" : ""}>${s}</option>`
     ).join("");
 
+    const edited = Boolean(req.updatedAt);
+
     item.innerHTML = `
       <div class="card-top">
         <span class="req-id">${req.ref}</span>
-        <time class="req-time" datetime="${req.createdAt}">${formatRelativeTime(req.createdAt)}</time>
+        <time class="req-time" datetime="${req.createdAt}" data-edited="${edited}">${formatTimeLabel(req.createdAt, edited)}</time>
       </div>
       <h3 class="card-title">${escapeHtml(req.name)}</h3>
       <p class="card-email">${escapeHtml(req.email)}</p>
@@ -260,13 +339,18 @@ function renderList(visible) {
         <span class="tag tag-priority-${req.priority}">${req.priority} priority</span>
         <div class="card-actions">
           <select class="status-select" aria-label="Status for ${req.ref}">${statusOptions}</select>
-          <button type="button" class="btn-delete" aria-label="Delete ${req.ref}">Delete</button>
+          <button type="button" class="btn-card btn-edit" aria-label="Edit ${req.ref}">Edit</button>
+          <button type="button" class="btn-card btn-delete" aria-label="Delete ${req.ref}">Delete</button>
         </div>
       </div>
     `;
 
     item.querySelector(".status-select").addEventListener("change", (e) => {
       updateStatus(req.id, e.target.value);
+    });
+
+    item.querySelector(".btn-edit").addEventListener("click", () => {
+      startEditing(req.id);
     });
 
     item.querySelector(".btn-delete").addEventListener("click", () => {
@@ -294,7 +378,23 @@ function renderMeter() {
     }
 
     const li = document.createElement("li");
-    li.innerHTML = `<span class="dot" style="background:${STATUS_COLORS[status]}"></span>${status} ${counts[status]}`;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "legend-btn";
+    button.innerHTML = `<span class="dot" style="background:${STATUS_COLORS[status]}"></span>${status} ${counts[status]}`;
+
+    // The legend doubles as a filter: click a status to filter by it, click again to clear.
+    const isActive = filters.status === status;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+    button.addEventListener("click", () => {
+      filters.status = isActive ? "" : status;
+      el.filterStatus.value = filters.status;
+      el.filterStatus.classList.toggle("active", filters.status !== "");
+      render();
+    });
+
+    li.appendChild(button);
     el.meterLegend.appendChild(li);
   }
 }
@@ -329,6 +429,7 @@ function updateStatus(id, status) {
 function deleteRequest(id, ref) {
   const confirmed = window.confirm(`Delete ${ref}? This can't be undone.`);
   if (!confirmed) return;
+  if (editingId === id) cancelEditing(); // don't leave the form editing a ghost
   requests = requests.filter((r) => r.id !== id);
   Storage.saveRequests(requests);
   showToast(`${ref} deleted`);
@@ -389,18 +490,21 @@ function csvEscape(value) {
   return `"${String(value).replace(/"/g, '""')}"`;
 }
 
-/** "just now", "5 min ago", "2 h ago", or a date for older requests. */
-function formatRelativeTime(isoString) {
+/** "just now", "5 min ago", "2 h ago", or a date for older requests; marks edited ones. */
+function formatTimeLabel(isoString, edited = false) {
   const seconds = Math.floor((Date.now() - new Date(isoString)) / 1000);
-  if (seconds < 60) return "just now";
-  if (seconds < 3600) return `${Math.floor(seconds / 60)} min ago`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)} h ago`;
-  if (seconds < 604800) return `${Math.floor(seconds / 86400)} d ago`;
-  return new Date(isoString).toLocaleDateString(undefined, {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+  let label;
+  if (seconds < 60) label = "just now";
+  else if (seconds < 3600) label = `${Math.floor(seconds / 60)} min ago`;
+  else if (seconds < 86400) label = `${Math.floor(seconds / 3600)} h ago`;
+  else if (seconds < 604800) label = `${Math.floor(seconds / 86400)} d ago`;
+  else
+    label = new Date(isoString).toLocaleDateString(undefined, {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  return edited ? `${label} · edited` : label;
 }
 
 let toastTimer;
