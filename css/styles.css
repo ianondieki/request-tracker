@@ -33,8 +33,14 @@
   --font-body: "Instrument Sans", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
-  --radius: 10px;
-  --shadow: 0 1px 2px rgba(21, 40, 45, 0.06), 0 6px 18px rgba(21, 40, 45, 0.05);
+  --radius: 14px;
+  --radius-sm: 10px;
+
+  /* Layered shadow system — soft ambient + tighter contact shadow */
+  --shadow-sm: 0 1px 2px rgba(21, 40, 45, 0.05), 0 2px 6px rgba(21, 40, 45, 0.04);
+  --shadow: 0 1px 2px rgba(21, 40, 45, 0.06), 0 8px 24px -6px rgba(21, 40, 45, 0.1);
+  --shadow-lg: 0 2px 4px rgba(21, 40, 45, 0.06), 0 18px 44px -12px rgba(21, 40, 45, 0.18);
+  --ring: 0 0 0 3px rgba(14, 124, 102, 0.16);
 }
 
 * {
@@ -52,12 +58,40 @@ body {
   font-size: 15px;
   line-height: 1.55;
   color: var(--ink);
-  background:
-    radial-gradient(1100px 500px at 85% -10%, rgba(14, 124, 102, 0.07), transparent 60%),
-    var(--mist);
+  background-color: var(--mist);
+  /* Layered mesh: warm amber glow top-right, viridian wash bottom-left,
+     plus a faint structural grid. Sized/positioned so it reads as ambient depth. */
+  background-image:
+    radial-gradient(900px 520px at 88% -8%, rgba(14, 124, 102, 0.1), transparent 60%),
+    radial-gradient(760px 480px at 6% 12%, rgba(201, 122, 18, 0.06), transparent 55%),
+    radial-gradient(1000px 700px at 50% 120%, rgba(14, 124, 102, 0.08), transparent 60%),
+    linear-gradient(rgba(21, 40, 45, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(21, 40, 45, 0.022) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 34px 34px, 34px 34px;
+  background-attachment: fixed, fixed, fixed, fixed, fixed;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+/* Ultra-fine grain so large flat areas don't look plasticky on big screens */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+/* Keep real content above the grain layer */
+.site-header,
+.layout,
+.site-footer {
+  position: relative;
+  z-index: 1;
 }
 
 .wrap {
@@ -68,9 +102,10 @@ body {
 /* ---------- Header ---------- */
 
 .site-header {
-  border-bottom: 1px solid var(--line);
-  background: rgba(237, 242, 240, 0.85);
-  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(212, 222, 219, 0.7);
+  background: rgba(237, 242, 240, 0.72);
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
   position: sticky;
   top: 0;
   z-index: 20;
@@ -94,7 +129,8 @@ body {
   width: 10px;
   height: 26px;
   border-radius: 3px;
-  background: linear-gradient(180deg, var(--viridian), var(--viridian-dark));
+  background: linear-gradient(160deg, var(--viridian) 30%, var(--amber) 160%);
+  box-shadow: 0 2px 8px -2px rgba(14, 124, 102, 0.5);
 }
 
 .wordmark h1 {
@@ -185,10 +221,21 @@ body {
 }
 
 .panel {
-  background: var(--surface);
-  border: 1px solid var(--line);
+  position: relative;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(255, 255, 255, 0.92));
+  border: 1px solid rgba(212, 222, 219, 0.8);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
+}
+
+/* Hairline highlight along the very top edge — the "lit from above" cue that reads premium */
+.panel::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9) 20%, rgba(255, 255, 255, 0.9) 80%, transparent);
 }
 
 .panel-form {
@@ -419,19 +466,23 @@ body {
 
 .btn-primary {
   width: 100%;
-  padding: 0.7rem 1rem;
+  padding: 0.75rem 1rem;
   font-size: 0.95rem;
   color: #fff;
-  background: var(--viridian);
+  background: linear-gradient(180deg, #11926f, var(--viridian-dark));
   border: 1px solid var(--viridian-dark);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset, 0 6px 16px -6px rgba(10, 92, 76, 0.6);
+  transition: transform 0.12s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
 
 .btn-primary:hover {
-  background: var(--viridian-dark);
+  filter: brightness(1.06);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 10px 22px -8px rgba(10, 92, 76, 0.7);
 }
 
 .btn-primary:active {
   transform: translateY(1px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15) inset, 0 4px 10px -6px rgba(10, 92, 76, 0.6);
 }
 
 .btn-ghost {
@@ -526,17 +577,25 @@ body {
 .request-card {
   position: relative;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 1rem 1.1rem 1rem 1.35rem;
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.1rem 1rem 1.4rem;
   background: #fff;
   overflow: hidden;
-  animation: card-in 0.3s ease both;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  animation: card-in 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.request-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: color-mix(in srgb, var(--spine, var(--viridian)) 35%, var(--line));
 }
 
 @keyframes card-in {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -544,19 +603,33 @@ body {
   }
 }
 
-/* Status spine — the colored rail on the card's left edge */
+/* Status spine — the colored rail on the card's left edge, with a faint tint bleeding inward */
 .request-card::before {
   content: "";
   position: absolute;
   inset: 0 auto 0 0;
-  width: 5px;
+  width: 4px;
   background: var(--spine, var(--status-new));
+}
+
+.request-card::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 64px;
+  pointer-events: none;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--spine, var(--status-new)) 8%, transparent), transparent);
 }
 
 .request-card[data-status="New"] { --spine: var(--status-new); }
 .request-card[data-status="In Review"] { --spine: var(--status-review); }
 .request-card[data-status="Resolved"] { --spine: var(--status-resolved); }
 .request-card[data-status="Rejected"] { --spine: var(--status-rejected); opacity: 0.78; }
+
+.request-card > * {
+  position: relative;
+  z-index: 1;
+}
 
 .card-top {
   display: flex;
@@ -686,10 +759,18 @@ body {
 
 .empty-state {
   text-align: center;
-  padding: 3.5rem 1rem;
+  padding: 3.25rem 1rem;
   border: 1px dashed var(--line);
   border-radius: var(--radius);
   color: var(--slate);
+  background: radial-gradient(420px 200px at 50% 0%, rgba(14, 124, 102, 0.04), transparent 70%);
+}
+
+.empty-icon {
+  width: 56px;
+  height: 56px;
+  color: var(--slate);
+  margin-bottom: 0.9rem;
 }
 
 .empty-state[hidden] {

@@ -2,7 +2,7 @@
 
 A small web app for submitting and managing requests — bugs, feature ideas, general feedback, partnership enquiries — with a live queue where each request can be triaged, filtered, searched and exported.
 
-**Live demo:** _https://request-tracker.nyamungaian.workers.dev/_
+**Live demo:** _add your deployed URL here_
 
 ## What it does
 
@@ -76,15 +76,15 @@ Everything in the basic brief: working form, validated inputs, queue list, statu
 
 ## What I'd improve with more time
 
--Move storage to a shared backend (Cloudflare D1 + a small API) so requests sync across devices instead of living in one browser.
--An admin-only view behind authentication, so status changes aren't open to every visitor.
--Automated tests for the filtering and validation logic.
--Server-side pagination once the queue grows beyond a few hundred records.
--An "undo" window after delete, rather than a blocking confirm dialog.
+- Move storage to **Cloudflare D1** behind a small API so requests are shared across devices rather than per-browser.
+- An **admin-only view** with authentication, so status changes aren't available to every visitor.
+- Unit tests for the filter and validation logic.
+- Pagination or virtualization if the queue grows large.
+- An undo option after delete, instead of a confirm dialog.
 
 ## Challenges faced
 
--The trickiest bug was a horizontal scroll that only appeared on mobile. The layout looked fine on desktop, and it took me a while to trace it to the hidden radio inputs behind the priority buttons stretching the page. I also had to figure out the right Cloudflare build settings, since a plain HTML site has no build command._
+- _Fill this in honestly — e.g. a bug you hit, a CSS issue, something you had to learn (deploying to Cloudflare Pages, localStorage quirks, etc.)._
 
 ## Use of AI tools
 

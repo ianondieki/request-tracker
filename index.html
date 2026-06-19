@@ -49,7 +49,7 @@
       <form id="request-form" novalidate>
         <div class="field">
           <label for="name">Full name</label>
-          <input type="text" id="name" name="name" autocomplete="name" placeholder="e.g. Ian Ondieki" required />
+          <input type="text" id="name" name="name" autocomplete="name" placeholder="e.g. Oiza Bello" required />
           <p class="field-error" data-error-for="name"></p>
         </div>
 
@@ -131,6 +131,14 @@
       <ul class="request-list" id="request-list" aria-live="polite"></ul>
 
       <div class="empty-state" id="empty-state">
+        <svg class="empty-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <rect x="9" y="7" width="30" height="34" rx="4" stroke="currentColor" stroke-width="2" opacity="0.5"/>
+          <rect x="15" y="14" width="13" height="2.4" rx="1.2" fill="currentColor" opacity="0.5"/>
+          <rect x="15" y="21" width="18" height="2.4" rx="1.2" fill="currentColor" opacity="0.35"/>
+          <rect x="15" y="28" width="10" height="2.4" rx="1.2" fill="currentColor" opacity="0.35"/>
+          <circle cx="35" cy="34" r="9" fill="var(--mist)" stroke="currentColor" stroke-width="2"/>
+          <path d="M31.5 34l2.4 2.4 4.6-4.8" stroke="var(--viridian)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
         <p class="empty-title">The queue is empty</p>
         <p class="empty-sub">Submit a request with the form to see it appear here.</p>
       </div>
